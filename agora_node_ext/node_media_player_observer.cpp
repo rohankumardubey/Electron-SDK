@@ -35,11 +35,24 @@ void NodeMediaPlayerObserver::onPositionChanged(int64_t position) {
   });
 }
 
-void NodeMediaPlayerObserver::onPlayerEvent(
-    media::base::MEDIA_PLAYER_EVENT event) {
-  node_async_call::async_call([this, event] {
-    MEDIA_PLAYER_MAKE_JS_CALL_1(MEDIA_PLAYER_ON_PLAY_EVENT, int32, event);
-  });
+void NodeMediaPlayerObserver::onPlayerEvent(media::base::MEDIA_PLAYER_EVENT event, int64_t elapsedTime, const char* message) {
+
+}
+
+void NodeMediaPlayerObserver::onPreloadEvent(const char* src, media::base::PLAYER_PRELOAD_EVENT event) {
+
+}
+
+void NodeMediaPlayerObserver::onAgoraCDNTokenWillExpire() {
+
+}
+
+void NodeMediaPlayerObserver::onPlayerSrcInfoChanged(const media::base::SrcInfo& from, const media::base::SrcInfo& to) {
+
+}
+
+void NodeMediaPlayerObserver::onPlayerIdsRenew(const char* jsonIds) {
+
 }
 
 void NodeMediaPlayerObserver::onMetaData(const void *data, int length) {

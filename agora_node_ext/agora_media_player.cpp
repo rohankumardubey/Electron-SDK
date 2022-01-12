@@ -388,9 +388,9 @@ NAPI_API_DEFINE_MEDIA_PLAYER(NodeMediaPlayer, changePlaybackSpeed) {
     napi_status status = napi_ok;
     status = napi_get_value_int32_(args[0], speed);
     CHECK_NAPI_STATUS(mediaPlayer, status);
-    result =
+    /*result =
         mediaPlayer->mMediaPlayer->m_mediaPlayerSource->changePlaybackSpeed(
-            (agora::media::base::MEDIA_PLAYER_PLAYBACK_SPEED)speed);
+            (agora::media::base::MEDIA_PLAYER_PLAYBACK_SPEED)speed);*/
   } while (false);
   media_player_napi_set_int_result(args, result);
 }

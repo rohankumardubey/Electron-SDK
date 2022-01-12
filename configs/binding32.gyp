@@ -75,9 +75,13 @@
                 'copies': [{
                     'destination': '<(PRODUCT_DIR)',
                     'files': [
+                        './sdk/libagora-wgc.dll'
+                        './sdk/libagora_video_process_extension.dll',
+                        './sdk/libagora_segmentation_extension.dll',
+                        './sdk/libagora_pvc_extension.dll',
+                        './sdk/bequic.dll',
                         './sdk/agora_rtc_sdk.dll',
                         './sdk/libagora-ffmpeg.dll',
-                        './sdk/libagora-wgc.dll'
                     ]
                 }],
                 'library_dirs': [

@@ -3961,6 +3961,10 @@ setAddonLogFile(filePath: string): void;
   * @ignore
   */
   setProcessDpiAwareness(): void;
+  /**
+  * @ignore
+  */
+  enableVirtualBackground(enabled: boolean,backgroundSource:VirtualBackgroundSource,segpropert: SegmentationProperty): void 
 }
 
 export interface NodeMediaPlayer {
@@ -3980,3 +3984,85 @@ export interface NodeMediaPlayer {
   selectAudioTrack(index: number): number;
 
 }
+
+
+/** The type of the custom background image.
+   */
+export enum BACKGROUND_SOURCE_TYPE {
+  /**
+   * 1: (Default) The background image is a solid color.
+   */
+  BACKGROUND_COLOR = 1,
+  /**
+   * The background image is a file in PNG or JPG format.
+   */
+  BACKGROUND_IMG,
+  /** Background source is blur background besides human body*/
+  BACKGROUND_BLUR,
+};
+/** The blur degree used to blur background in different level.(foreground keeps same as before).
+   */
+ export enum BACKGROUND_BLUR_DEGREE {
+  /** blur degree level low, background can see things, but have some blur effect */
+  BLUR_DEGREE_LOW = 1,
+  /** blur degree level medium, blur more than level medium */
+  BLUR_DEGREE_MEDIUM,
+  /** blur degree level high, blur default, hard to find background */
+  BLUR_DEGREE_HIGH,
+};
+export enum SEG_MODEL_TYPE {
+  SEG_MODEL_AGORA_AI_ONE = 0, 
+  SEG_MODEL_AGORA_GREEN = 2
+};
+export interface VirtualBackgroundSource {
+  
+
+  
+  /** The type of the custom background image. See #BACKGROUND_SOURCE_TYPE.
+   */
+   background_source_type:BACKGROUND_SOURCE_TYPE;
+
+  
+
+
+  /**
+   * The color of the custom background image. The format is a hexadecimal integer defined by RGB, without the # sign,
+   * such as 0xFFB6C1 for light pink. The default value is 0xFFFFFF, which signifies white. The value range
+   * is [0x000000,0xFFFFFF]. If the value is invalid, the SDK replaces the original background image with a white
+   * background image.
+   *
+   * @note This parameter takes effect only when the type of the custom background image is `BACKGROUND_COLOR`.
+   */
+  color:number;
+
+  /**
+   * The local absolute path of the custom background image. PNG and JPG formats are supported. If the path is invalid,
+   * the SDK replaces the original background image with a white background image.
+   *
+   * @note This parameter takes effect only when the type of the custom background image is `BACKGROUND_IMG`.
+   */
+  source:string;
+
+  /** blur degree */
+   blur_degree:BACKGROUND_BLUR_DEGREE;
+  
+   modeltype:SEG_MODEL_TYPE;
+
+   prefervelocity:number;
+
+  greencapacity:number; 
+  
+};
+
+
+export interface SegmentationProperty {
+
+
+
+ modeltype:SEG_MODEL_TYPE;
+
+  prefervelocity:number;
+
+  greencapacity: number;
+
+};

@@ -121,7 +121,11 @@ public:
   onPlayerSourceStateChanged(media::base::MEDIA_PLAYER_STATE state,
                              media::base::MEDIA_PLAYER_ERROR ec) override;
   virtual void onPositionChanged(int64_t position) override;
-  virtual void onPlayerEvent(media::base::MEDIA_PLAYER_EVENT event) override;
+  virtual void onPlayerEvent(media::base::MEDIA_PLAYER_EVENT event, int64_t elapsedTime, const char* message) override;
+  virtual void onPreloadEvent(const char* src, media::base::PLAYER_PRELOAD_EVENT event) override;
+  virtual void onAgoraCDNTokenWillExpire() override;
+  virtual void onPlayerSrcInfoChanged(const media::base::SrcInfo& from, const media::base::SrcInfo& to) override;
+  virtual void onPlayerIdsRenew(const char* jsonIds) override;
   virtual void onMetaData(const void *data, int length) override;
 
   virtual void onPlayBufferUpdated(int64_t playCachedBuffer) override;

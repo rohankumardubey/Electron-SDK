@@ -77,7 +77,9 @@ import {
   VIDEO_STREAM_TYPE,
   REMOTE_VIDEO_DOWNSCALE_LEVEL,
   AUDIO_MIXING_STATE_TYPE,
-  AUDIO_MIXING_ERROR_TYPE
+  AUDIO_MIXING_ERROR_TYPE,
+  VirtualBackgroundSource,
+  SegmentationProperty
 } from './native_type';
 import { EventEmitter } from 'events';
 import { deprecate, config, Config } from '../Utils';
@@ -4451,6 +4453,9 @@ class AgoraRtcEngine extends EventEmitter {
  setAddonLogFile(filePath: string): void {
    this.rtcEngine.setAddonLogFile(filePath);
  }
+ enableVirtualBackground(enabled: boolean,backgroundSource:VirtualBackgroundSource,segpropert: SegmentationProperty): void {
+  this.rtcEngine.enableVirtualBackground(enabled,backgroundSource,segpropert);
+}
  setProcessDpiAwareness(): void {
   this.rtcEngine.setProcessDpiAwareness();
  }
