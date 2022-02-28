@@ -1,3 +1,6 @@
+## 3.5.3-build.228(Jan 28th, 2022)
+- update native sdk
+
 ## 3.6.1-rc.3-build.228(Jan 28th, 2021)
 - change api: getScreenWindowsInfo getScreenDisplaysInfo getRealScreenDisplaysInfo
 - update native sdk

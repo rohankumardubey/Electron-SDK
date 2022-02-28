@@ -545,12 +545,12 @@ class AgoraRtcEngine extends EventEmitter {
     ) {
       fire('snapshotTaken', channel, uid, elapsed);
     });
-    this.rtcEngine.onEvent('audioDeviceTestVolumeIndication', function(
-      volumeType: AudioDeviceTestVolumeType,
-      volume: number
-    ) {
-      fire('audioDeviceTestVolumeIndication', volumeType, volume);
-    });
+    // this.rtcEngine.onEvent('audioDeviceTestVolumeIndication', function(
+    //   volumeType: AudioDeviceTestVolumeType,
+    //   volume: number
+    // ) {
+    //   fire('audioDeviceTestVolumeIndication', volumeType, volume);
+    // });
 
     // this.rtcEngine.onEvent('connectioninterrupted', function() {
     //   fire('connectioninterrupted');
@@ -6603,12 +6603,12 @@ class AgoraRtcEngine extends EventEmitter {
     return this.rtcEngine.videoSourceMuteAllRemoteVideoStreams(mute);
   }
 
-  getDefaultAudioPlaybackDevices(): Object {
-    return this.rtcEngine.getDefaultAudioPlaybackDevices();
-  }
-  getDefaultAudioRecordingDevices(): Object {
-    return this.rtcEngine.getDefaultAudioRecordingDevices();
-  }
+  // getDefaultAudioPlaybackDevices(): Object {
+  //   return this.rtcEngine.getDefaultAudioPlaybackDevices();
+  // }
+  // getDefaultAudioRecordingDevices(): Object {
+  //   return this.rtcEngine.getDefaultAudioRecordingDevices();
+  // }
 
   /**
    * 3.5.2 && 3.6.0 && 3.6.0.1
@@ -6645,149 +6645,149 @@ class AgoraRtcEngine extends EventEmitter {
   takeSnapshot(channel: string, uid: number, filePath: string): number {
     return this.rtcEngine.takeSnapshot(channel, uid, filePath);
   }
-  /**
-   * Starts pushing media streams to a CDN without transcoding.
-   *
-   * @since v3.6.0
-   *
-   * You can call this method to push a live audio-and-video stream to the specified CDN address. This method can push
-   * media streams to only one CDN address at a time, so if you need to push streams to multiple addresses, call this
-   * method multiple times.
-   *
-   * After you call this method, the SDK triggers the \ref IRtcEngineEventHandler::onRtmpStreamingStateChanged "onRtmpStreamingStateChanged"
-   * callback on the local client to report the state of the streaming.
-   *
-   * @note
-   * - Ensure that you enable the RTMP Converter service before using this function. See Prerequisites in *Push Streams to CDN*.
-   * - Call this method after joining a channel.
-   * - Only hosts in the `LIVE_BROADCASTING` profile can call this method.
-   * - If you want to retry pushing streams after a failed push, make sure to call \ref IRtcEngine::stopRtmpStream "stopRtmpStream" first,
-   * then call this method to retry pushing streams; otherwise, the SDK returns the same error code as the last failed push.
-   * - If you want to push media streams in the RTMPS protocol to CDN, call \ref IRtcEngine::startRtmpStreamWithTranscoding "startRtmpStreamWithTranscoding"
-   * instead of \ref IRtcEngine::startRtmpStreamWithoutTranscoding "startRtmpStreamWithoutTranscoding".
-   *
-   * @param url The address of the CDN live streaming. The format is RTMP. The character length cannot exceed 1024 bytes.
-   * Special characters such as Chinese characters are not supported.
-   *
-   * @return
-   * - 0: Success.
-   * - < 0: Failure.
-   *  - `ERR_INVALID_ARGUMENT(-2)`: url is null or the string length is 0.
-   *  - `ERR_NOT_INITIALIZED(-7)`: The SDK is not initialized before calling this method.
-   */
-  startRtmpStreamWithoutTranscoding(url: string): number {
-    return this.rtcEngine.startRtmpStreamWithoutTranscoding(url);
-  }
-  /**
-   * Starts pushing media streams to a CDN and sets the transcoding configuration.
-   *
-   * @since v3.6.0
-   *
-   * You can call this method to push a live audio-and-video stream to the specified CDN address and set the transcoding
-   * configuration. This method can push media streams to only one CDN address at a time, so if you need to push streams to
-   * multiple addresses, call this method multiple times.
-   *
-   * After you call this method, the SDK triggers the \ref IRtcEngineEventHandler::onRtmpStreamingStateChanged "onRtmpStreamingStateChanged"
-   * callback on the local client to report the state of the streaming.
-   *
-   * @note
-   * - Ensure that you enable the RTMP Converter service before using this function. See Prerequisites in *Push Streams to CDN*.
-   * - Call this method after joining a channel.
-   * - Only hosts in the `LIVE_BROADCASTING` profile can call this method.
-   * - If you want to retry pushing streams after a failed push, make sure to call \ref IRtcEngine::stopRtmpStream "stopRtmpStream" first,
-   * then call this method to retry pushing streams; otherwise, the SDK returns the same error code as the last failed push.
-   * - If you want to push media streams in the RTMPS protocol to CDN, call \ref IRtcEngine::startRtmpStreamWithTranscoding "startRtmpStreamWithTranscoding"
-   * instead of \ref IRtcEngine::startRtmpStreamWithoutTranscoding "startRtmpStreamWithoutTranscoding".
-   *
-   * @param url The address of the CDN live streaming. The format is RTMP or RTMPS. The character length cannot exceed 1024 bytes.
-   * Special characters such as Chinese characters are not supported.
-   * @param transcoding The transcoding configuration for CDN live streaming. See LiveTranscoding.
-   *
-   * @return
-   * - 0: Success.
-   * - < 0: Failure.
-   *  - `ERR_INVALID_ARGUMENT(-2)`: url is null or the string length is 0.
-   *  - `ERR_NOT_INITIALIZED(-7)`: The SDK is not initialized before calling this method.
-   */
-  startRtmpStreamWithTranscoding(
-    url: string,
-    transcoding: TranscodingConfig
-  ): number {
-    return this.rtcEngine.startRtmpStreamWithTranscoding(url, transcoding);
-  }
-  /**
-   * Updates the transcoding configuration.
-   *
-   * @since v3.6.0
-   *
-   * After you start pushing media streams to CDN with transcoding, you can dynamically update the transcoding configuration according to the scenario.
-   * The SDK triggers the \ref IRtcEngineEventHandler::onTranscodingUpdated "onTranscodingUpdated" callback after the
-   * transcoding configuration is updated.
-   *
-   * @param transcoding The transcoding configuration for CDN live streaming. See LiveTranscoding.
-   *
-   * @return
-   * - 0: Success.
-   * - < 0: Failure.
-   */
-  updateRtmpTranscoding(transcoding: TranscodingConfig): number {
-    return this.rtcEngine.updateRtmpTranscoding(transcoding);
-  }
-  /**
-   * Stops pushing media streams to a CDN.
-   *
-   * @since v3.6.0
-   *
-   * You can call this method to stop the live stream on the specified CDN address.
-   * This method can stop pushing media streams to only one CDN address at a time, so if you need to stop pushing streams to multiple addresses, call this method multiple times.
-   *
-   * After you call this method, the SDK triggers the \ref IRtcEngineEventHandler::onRtmpStreamingStateChanged "onRtmpStreamingStateChanged" callback on the local client to report the state of the streaming.
-   *
-   * @param url The address of the CDN live streaming. The format is RTMP or RTMPS.
-   * The character length cannot exceed 1024 bytes. Special characters such as Chinese characters are not supported.
-   *
-   * @return
-   * - 0: Success.
-   * - < 0: Failure.
-   */
-  stopRtmpStream(url: string): number {
-    return this.rtcEngine.stopRtmpStream(url);
-  }
-  setAVSyncSource(channelId: string, uid: number): number {
-    return this.rtcEngine.setAVSyncSource(channelId, uid);
-  }
-  /**
-   * Sets the audio playback device used by the SDK to follow the system default audio playback device.
-   *
-   * @since v3.6.0
-   *
-   * @param enable Whether to follow the system default audio playback device:
-   * - true: Follow. The SDK immediately switches the audio playback device when the system default audio playback device changes.
-   * - false: Do not follow. The SDK switches the audio playback device to the system default audio playback device only when the currently used audio playback device is disconnected.
-   *
-   * @return
-   * - 0: Success.
-   * - < 0: Failure.
-   */
-  followSystemPlaybackDevice(enable: boolean): number {
-    return this.rtcEngine.followSystemPlaybackDevice(enable);
-  }
-  /**
-   * Sets the audio recording device used by the SDK to follow the system default audio recording device.
-   *
-   * @since v3.6.0
-   *
-   * @param enable Whether to follow the system default audio recording device:
-   * - true: Follow. The SDK immediately switches the audio recording device when the system default audio recording device changes.
-   * - false: Do not follow. The SDK switches the audio recording device to the system default audio recording device only when the currently used audio recording device is disconnected.
-   *
-   * @return
-   * - 0: Success.
-   * - < 0: Failure.
-   */
-  followSystemRecordingDevice(enable: boolean): number {
-    return this.rtcEngine.followSystemRecordingDevice(enable);
-  }
+  // /**
+  //  * Starts pushing media streams to a CDN without transcoding.
+  //  *
+  //  * @since v3.6.0
+  //  *
+  //  * You can call this method to push a live audio-and-video stream to the specified CDN address. This method can push
+  //  * media streams to only one CDN address at a time, so if you need to push streams to multiple addresses, call this
+  //  * method multiple times.
+  //  *
+  //  * After you call this method, the SDK triggers the \ref IRtcEngineEventHandler::onRtmpStreamingStateChanged "onRtmpStreamingStateChanged"
+  //  * callback on the local client to report the state of the streaming.
+  //  *
+  //  * @note
+  //  * - Ensure that you enable the RTMP Converter service before using this function. See Prerequisites in *Push Streams to CDN*.
+  //  * - Call this method after joining a channel.
+  //  * - Only hosts in the `LIVE_BROADCASTING` profile can call this method.
+  //  * - If you want to retry pushing streams after a failed push, make sure to call \ref IRtcEngine::stopRtmpStream "stopRtmpStream" first,
+  //  * then call this method to retry pushing streams; otherwise, the SDK returns the same error code as the last failed push.
+  //  * - If you want to push media streams in the RTMPS protocol to CDN, call \ref IRtcEngine::startRtmpStreamWithTranscoding "startRtmpStreamWithTranscoding"
+  //  * instead of \ref IRtcEngine::startRtmpStreamWithoutTranscoding "startRtmpStreamWithoutTranscoding".
+  //  *
+  //  * @param url The address of the CDN live streaming. The format is RTMP. The character length cannot exceed 1024 bytes.
+  //  * Special characters such as Chinese characters are not supported.
+  //  *
+  //  * @return
+  //  * - 0: Success.
+  //  * - < 0: Failure.
+  //  *  - `ERR_INVALID_ARGUMENT(-2)`: url is null or the string length is 0.
+  //  *  - `ERR_NOT_INITIALIZED(-7)`: The SDK is not initialized before calling this method.
+  //  */
+  // startRtmpStreamWithoutTranscoding(url: string): number {
+  //   return this.rtcEngine.startRtmpStreamWithoutTranscoding(url);
+  // }
+  // /**
+  //  * Starts pushing media streams to a CDN and sets the transcoding configuration.
+  //  *
+  //  * @since v3.6.0
+  //  *
+  //  * You can call this method to push a live audio-and-video stream to the specified CDN address and set the transcoding
+  //  * configuration. This method can push media streams to only one CDN address at a time, so if you need to push streams to
+  //  * multiple addresses, call this method multiple times.
+  //  *
+  //  * After you call this method, the SDK triggers the \ref IRtcEngineEventHandler::onRtmpStreamingStateChanged "onRtmpStreamingStateChanged"
+  //  * callback on the local client to report the state of the streaming.
+  //  *
+  //  * @note
+  //  * - Ensure that you enable the RTMP Converter service before using this function. See Prerequisites in *Push Streams to CDN*.
+  //  * - Call this method after joining a channel.
+  //  * - Only hosts in the `LIVE_BROADCASTING` profile can call this method.
+  //  * - If you want to retry pushing streams after a failed push, make sure to call \ref IRtcEngine::stopRtmpStream "stopRtmpStream" first,
+  //  * then call this method to retry pushing streams; otherwise, the SDK returns the same error code as the last failed push.
+  //  * - If you want to push media streams in the RTMPS protocol to CDN, call \ref IRtcEngine::startRtmpStreamWithTranscoding "startRtmpStreamWithTranscoding"
+  //  * instead of \ref IRtcEngine::startRtmpStreamWithoutTranscoding "startRtmpStreamWithoutTranscoding".
+  //  *
+  //  * @param url The address of the CDN live streaming. The format is RTMP or RTMPS. The character length cannot exceed 1024 bytes.
+  //  * Special characters such as Chinese characters are not supported.
+  //  * @param transcoding The transcoding configuration for CDN live streaming. See LiveTranscoding.
+  //  *
+  //  * @return
+  //  * - 0: Success.
+  //  * - < 0: Failure.
+  //  *  - `ERR_INVALID_ARGUMENT(-2)`: url is null or the string length is 0.
+  //  *  - `ERR_NOT_INITIALIZED(-7)`: The SDK is not initialized before calling this method.
+  //  */
+  // startRtmpStreamWithTranscoding(
+  //   url: string,
+  //   transcoding: TranscodingConfig
+  // ): number {
+  //   return this.rtcEngine.startRtmpStreamWithTranscoding(url, transcoding);
+  // }
+  // /**
+  //  * Updates the transcoding configuration.
+  //  *
+  //  * @since v3.6.0
+  //  *
+  //  * After you start pushing media streams to CDN with transcoding, you can dynamically update the transcoding configuration according to the scenario.
+  //  * The SDK triggers the \ref IRtcEngineEventHandler::onTranscodingUpdated "onTranscodingUpdated" callback after the
+  //  * transcoding configuration is updated.
+  //  *
+  //  * @param transcoding The transcoding configuration for CDN live streaming. See LiveTranscoding.
+  //  *
+  //  * @return
+  //  * - 0: Success.
+  //  * - < 0: Failure.
+  //  */
+  // updateRtmpTranscoding(transcoding: TranscodingConfig): number {
+  //   return this.rtcEngine.updateRtmpTranscoding(transcoding);
+  // }
+  // /**
+  //  * Stops pushing media streams to a CDN.
+  //  *
+  //  * @since v3.6.0
+  //  *
+  //  * You can call this method to stop the live stream on the specified CDN address.
+  //  * This method can stop pushing media streams to only one CDN address at a time, so if you need to stop pushing streams to multiple addresses, call this method multiple times.
+  //  *
+  //  * After you call this method, the SDK triggers the \ref IRtcEngineEventHandler::onRtmpStreamingStateChanged "onRtmpStreamingStateChanged" callback on the local client to report the state of the streaming.
+  //  *
+  //  * @param url The address of the CDN live streaming. The format is RTMP or RTMPS.
+  //  * The character length cannot exceed 1024 bytes. Special characters such as Chinese characters are not supported.
+  //  *
+  //  * @return
+  //  * - 0: Success.
+  //  * - < 0: Failure.
+  //  */
+  // stopRtmpStream(url: string): number {
+  //   return this.rtcEngine.stopRtmpStream(url);
+  // }
+  // setAVSyncSource(channelId: string, uid: number): number {
+  //   return this.rtcEngine.setAVSyncSource(channelId, uid);
+  // }
+  // /**
+  //  * Sets the audio playback device used by the SDK to follow the system default audio playback device.
+  //  *
+  //  * @since v3.6.0
+  //  *
+  //  * @param enable Whether to follow the system default audio playback device:
+  //  * - true: Follow. The SDK immediately switches the audio playback device when the system default audio playback device changes.
+  //  * - false: Do not follow. The SDK switches the audio playback device to the system default audio playback device only when the currently used audio playback device is disconnected.
+  //  *
+  //  * @return
+  //  * - 0: Success.
+  //  * - < 0: Failure.
+  //  */
+  // followSystemPlaybackDevice(enable: boolean): number {
+  //   return this.rtcEngine.followSystemPlaybackDevice(enable);
+  // }
+  // /**
+  //  * Sets the audio recording device used by the SDK to follow the system default audio recording device.
+  //  *
+  //  * @since v3.6.0
+  //  *
+  //  * @param enable Whether to follow the system default audio recording device:
+  //  * - true: Follow. The SDK immediately switches the audio recording device when the system default audio recording device changes.
+  //  * - false: Do not follow. The SDK switches the audio recording device to the system default audio recording device only when the currently used audio recording device is disconnected.
+  //  *
+  //  * @return
+  //  * - 0: Success.
+  //  * - < 0: Failure.
+  //  */
+  // followSystemRecordingDevice(enable: boolean): number {
+  //   return this.rtcEngine.followSystemRecordingDevice(enable);
+  // }
   /**
    * Gets a list of shareable screens and windows.
    *
@@ -10018,10 +10018,10 @@ declare interface AgoraRtcChannel {
       errCode: number
     ) => void
   ): this;
-  on(
-    evt: 'audioDeviceTestVolumeIndication',
-    cb: (volumeType: AudioDeviceTestVolumeType, volume: number) => void
-  ): this;
+  // on(
+  //   evt: 'audioDeviceTestVolumeIndication',
+  //   cb: (volumeType: AudioDeviceTestVolumeType, volume: number) => void
+  // ): this;
 
   /** Occurs when the local user does not receive the data stream from the
    * remote user within five seconds.

@@ -418,20 +418,20 @@ class NodeRtcEngine : public node::ObjectWrap {
   NAPI_API(videoSourceMuteAllRemoteAudioStreams);
   NAPI_API(videoSourceMuteRemoteVideoStream);
   NAPI_API(videoSourceMuteAllRemoteVideoStreams);
-  NAPI_API(getDefaultAudioPlaybackDevices);
-  NAPI_API(getDefaultAudioRecordingDevices);
+//  NAPI_API(getDefaultAudioPlaybackDevices);
+//  NAPI_API(getDefaultAudioRecordingDevices);
   NAPI_API(videoSourceDisableAudio);
   /*
   * 3.5.2 && 3.6.0
   */
   NAPI_API(takeSnapshot);
-  NAPI_API(startRtmpStreamWithoutTranscoding);
-  NAPI_API(startRtmpStreamWithTranscoding);
-  NAPI_API(updateRtmpTranscoding);
-  NAPI_API(stopRtmpStream);
-  NAPI_API(setAVSyncSource);
-  NAPI_API(followSystemPlaybackDevice);
-  NAPI_API(followSystemRecordingDevice);
+//  NAPI_API(startRtmpStreamWithoutTranscoding);
+//  NAPI_API(startRtmpStreamWithTranscoding);
+//  NAPI_API(updateRtmpTranscoding);
+//  NAPI_API(stopRtmpStream);
+//  NAPI_API(setAVSyncSource);
+//  NAPI_API(followSystemPlaybackDevice);
+//  NAPI_API(followSystemRecordingDevice);
 
   /**
   * 3.4.11

@@ -35,8 +35,8 @@ agora::rtc::LiveTranscoding *
 getLiveTranscoding(Local<Object> &obj,
                    const Nan::FunctionCallbackInfo<Value> &args, T *pEngine) {
   TranscodingUser *users = nullptr;
-  RtcImage *wkImages = nullptr;
-  RtcImage *bgImages = nullptr;
+  RtcImage *wkImage = new RtcImage();
+  RtcImage *bgImage = new RtcImage();
   LiveStreamAdvancedFeature *liveStreamAdvancedFeature = nullptr;
 
   std::string key = "";
@@ -164,127 +164,89 @@ getLiveTranscoding(Local<Object> &obj,
       transcoding->advancedFeatureCount = count;
     }
 
-    v8::Array *watermarkArr;
-    status = napi_get_object_property_array_(isolate, obj, "watermark",
-                                             watermarkArr);
-    if (status == napi_ok && watermarkArr->Length() > 0) {
-      auto count = watermarkArr->Length();
-      wkImages = new RtcImage[count];
-      for (uint32 i = 0; i < watermarkArr->Length(); i++) {
-        Local<Value> value = watermarkArr->Get(context, i).ToLocalChecked();
-        Local<Object> watermarkObj;
-        status = napi_get_value_object_(isolate, value, watermarkObj);
-        if (watermarkObj->IsNullOrUndefined()) {
-          status = napi_invalid_arg;
-          break;
-        }
-        key = "url";
-        NodeString urlStr;
-        status = napi_get_object_property_nodestring_(isolate, watermarkObj,
-                                                      key, urlStr);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-        if (urlStr) {
-          int len = strlen(urlStr) + 1;
-          char *string = new char[len];
-          memset(string, 0, len);
-          strcpy(string, urlStr);
-          wkImages[i].url = string;
-        }
-
-        key = "x";
-        napi_get_object_property_int32_(isolate, watermarkObj, key,
-                                        wkImages[i].x);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-
-        key = "y";
-        napi_get_object_property_int32_(isolate, watermarkObj, key,
-                                        wkImages[i].y);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-
-        key = "width";
-        napi_get_object_property_int32_(isolate, watermarkObj, key,
-                                        wkImages[i].width);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-
-        key = "height";
-        napi_get_object_property_int32_(isolate, watermarkObj, key,
-                                        wkImages[i].height);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-
-        key = "zOrder";
-        napi_get_object_property_int32_(isolate, watermarkObj, key,
-                                        wkImages[i].zOrder);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-          
-        key = "alpha";
-        napi_get_object_property_double_(isolate, watermarkObj, key,
-                                        wkImages[i].alpha);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+    Local<Object> watermarkObj;
+    status = napi_get_object_property_object_(isolate, obj, "watermark",
+                                              watermarkObj);
+    if (status == napi_ok) {
+      if (watermarkObj->IsNullOrUndefined()) {
+        status = napi_invalid_arg;
+        break;
       }
-      transcoding->watermark = wkImages;
-      transcoding->watermarkCount = count;
+      key = "url";
+      NodeString urlStr;
+      status = napi_get_object_property_nodestring_(isolate, watermarkObj, key,
+                                                    urlStr);
+      CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+      if (urlStr) {
+        int len = strlen(urlStr) + 1;
+        char *string = new char[len];
+        memset(string, 0, len);
+        strcpy(string, urlStr);
+        wkImage->url = string;
+      }
+
+      key = "x";
+      napi_get_object_property_int32_(isolate, watermarkObj, key, wkImage->x);
+      CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+
+      key = "y";
+      napi_get_object_property_int32_(isolate, watermarkObj, key, wkImage->y);
+      CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+
+      key = "width";
+      napi_get_object_property_int32_(isolate, watermarkObj, key,
+                                      wkImage->width);
+      CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+
+      key = "height";
+      napi_get_object_property_int32_(isolate, watermarkObj, key,
+                                      wkImage->height);
+      CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+      transcoding->watermark = wkImage;
     }
 
-    v8::Array *backgroundImageArr;
-    status = napi_get_object_property_array_(isolate, obj, "backgroundImage",
-                                             backgroundImageArr);
-    if (status == napi_ok && backgroundImageArr->Length() > 0) {
-      auto count = backgroundImageArr->Length();
-      bgImages = new RtcImage[count];
-      for (uint32 i = 0; i < backgroundImageArr->Length(); i++) {
-        Local<Value> value =
-            backgroundImageArr->Get(context, i).ToLocalChecked();
-        Local<Object> advancedFeatureObj;
-        status = napi_get_value_object_(isolate, value, advancedFeatureObj);
-        if (advancedFeatureObj->IsNullOrUndefined()) {
-          status = napi_invalid_arg;
-          break;
-        }
-        key = "url";
-        NodeString urlStr;
-        napi_get_object_property_nodestring_(isolate, advancedFeatureObj, key,
-                                             urlStr);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-        if (urlStr) {
-          int len = strlen(urlStr) + 1;
-          char *string = new char[len];
-          memset(string, 0, len);
-          strcpy(string, urlStr);
-          bgImages[i].url = string;
-        }
-
-        key = "x";
-        napi_get_object_property_int32_(isolate, advancedFeatureObj, key,
-                                        bgImages[i].x);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-
-        key = "y";
-        napi_get_object_property_int32_(isolate, advancedFeatureObj, key,
-                                        bgImages[i].y);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-
-        key = "width";
-        napi_get_object_property_int32_(isolate, advancedFeatureObj, key,
-                                        bgImages[i].width);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-
-        key = "height";
-        napi_get_object_property_int32_(isolate, advancedFeatureObj, key,
-                                        bgImages[i].height);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-        
-        key = "zOrder";
-        napi_get_object_property_int32_(isolate, advancedFeatureObj, key,
-                                        bgImages[i].zOrder);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
-            
-        key = "alpha";
-        napi_get_object_property_double_(isolate, advancedFeatureObj, key,
-                                        bgImages[i].alpha);
-        CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+    Local<Object> backgroundImageObj;
+    status = napi_get_object_property_object_(isolate, obj, "backgroundImage",
+                                              backgroundImageObj);
+    if (status == napi_ok) {
+      if (backgroundImageObj->IsNullOrUndefined()) {
+        status = napi_invalid_arg;
+        break;
       }
-      transcoding->backgroundImage = bgImages;
-      transcoding->backgroundImageCount = count;
+      key = "url";
+      NodeString urlStr;
+      napi_get_object_property_nodestring_(isolate, backgroundImageObj, key,
+                                           urlStr);
+      CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+      if (urlStr) {
+        int len = strlen(urlStr) + 1;
+        char *string = new char[len];
+        memset(string, 0, len);
+        strcpy(string, urlStr);
+        bgImage->url = string;
+      }
+
+      key = "x";
+      napi_get_object_property_int32_(isolate, backgroundImageObj, key,
+                                      bgImage->x);
+      CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+
+      key = "y";
+      napi_get_object_property_int32_(isolate, backgroundImageObj, key,
+                                      bgImage->y);
+      CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+
+      key = "width";
+      napi_get_object_property_int32_(isolate, backgroundImageObj, key,
+                                      bgImage->width);
+      CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+
+      key = "height";
+      napi_get_object_property_int32_(isolate, backgroundImageObj, key,
+                                      bgImage->height);
+      CHECK_NAPI_STATUS_PARAM(pEngine, status, key);
+
+      transcoding->backgroundImage = bgImage;
     }
 
     v8::Array *usersValue;
@@ -666,21 +628,21 @@ void NodeRtcEngine::Init(Local<Object>& module) {
   PROPERTY_METHOD_DEFINE(videoSourceMuteRemoteVideoStream);
   PROPERTY_METHOD_DEFINE(videoSourceMuteAllRemoteVideoStreams);
   PROPERTY_METHOD_DEFINE(videoSourceDisableAudio);
-  PROPERTY_METHOD_DEFINE(getDefaultAudioPlaybackDevices);
-  PROPERTY_METHOD_DEFINE(getDefaultAudioRecordingDevices);
+//  PROPERTY_METHOD_DEFINE(getDefaultAudioPlaybackDevices);
+//  PROPERTY_METHOD_DEFINE(getDefaultAudioRecordingDevices);
   PROPERTY_METHOD_DEFINE(videoSourceDisableAudio);
 
   /**
    * 3.5.2 && 3.6.0
   */
   PROPERTY_METHOD_DEFINE(takeSnapshot);
-  PROPERTY_METHOD_DEFINE(startRtmpStreamWithoutTranscoding);
-  PROPERTY_METHOD_DEFINE(startRtmpStreamWithTranscoding)
-  PROPERTY_METHOD_DEFINE(updateRtmpTranscoding);
-  PROPERTY_METHOD_DEFINE(stopRtmpStream);
-  PROPERTY_METHOD_DEFINE(setAVSyncSource);
-  PROPERTY_METHOD_DEFINE(followSystemPlaybackDevice);
-  PROPERTY_METHOD_DEFINE(followSystemRecordingDevice);
+//  PROPERTY_METHOD_DEFINE(startRtmpStreamWithoutTranscoding);
+//  PROPERTY_METHOD_DEFINE(startRtmpStreamWithTranscoding)
+//  PROPERTY_METHOD_DEFINE(updateRtmpTranscoding);
+//  PROPERTY_METHOD_DEFINE(stopRtmpStream);
+//  PROPERTY_METHOD_DEFINE(setAVSyncSource);
+//  PROPERTY_METHOD_DEFINE(followSystemPlaybackDevice);
+//  PROPERTY_METHOD_DEFINE(followSystemRecordingDevice);
   /*
   * 3.4.11
   */
@@ -965,16 +927,12 @@ NAPI_API_DEFINE(NodeRtcEngine, setLiveTranscoding) {
     }
     result = pEngine->m_engine->setLiveTranscoding(*liveTranscoding);
     if (liveTranscoding->watermark) {
-      for (unsigned int i = 0; i < liveTranscoding->watermarkCount; i++) {
-        delete liveTranscoding->watermark[i].url;
-      }
-      delete[] liveTranscoding->watermark;
+      delete liveTranscoding->watermark->url;
+      delete liveTranscoding->watermark;
     }
     if (liveTranscoding->backgroundImage) {
-      for (unsigned int i = 0; i < liveTranscoding->backgroundImageCount; i++) {
-        delete liveTranscoding->backgroundImage[i].url;
-      }
-      delete[] liveTranscoding->backgroundImage;
+      delete liveTranscoding->backgroundImage->url;
+      delete liveTranscoding->backgroundImage;
     }
     if (liveTranscoding->transcodingUsers) {
       delete[] liveTranscoding->transcodingUsers;
@@ -7244,80 +7202,80 @@ NAPI_API_DEFINE(NodeRtcEngine, videoSourceDisableAudio) {
   LOG_LEAVE;
 }
 
-NAPI_API_DEFINE(NodeRtcEngine, getDefaultAudioPlaybackDevices) {
-  LOG_ENTER;
-  do {
-    NodeRtcEngine *pEngine = nullptr;
-    Isolate *isolate = args.GetIsolate();
-    Local<Context> context = isolate->GetCurrentContext();
-    napi_get_native_this(args, pEngine);
-    CHECK_NATIVE_THIS(pEngine);
+//NAPI_API_DEFINE(NodeRtcEngine, getDefaultAudioPlaybackDevices) {
+//  LOG_ENTER;
+//  do {
+//    NodeRtcEngine *pEngine = nullptr;
+//    Isolate *isolate = args.GetIsolate();
+//    Local<Context> context = isolate->GetCurrentContext();
+//    napi_get_native_this(args, pEngine);
+//    CHECK_NATIVE_THIS(pEngine);
+//
+//    if (!pEngine->m_audioVdm) {
+//      pEngine->m_audioVdm = new AAudioDeviceManager(pEngine->m_engine);
+//    }
+//    IAudioDeviceManager *adm = pEngine->m_audioVdm->get();
+//    auto pdc = adm ? adm->enumeratePlaybackDevices() : nullptr;
+//    char deviceName[MAX_DEVICE_ID_LENGTH] = {0};
+//    char deviceId[MAX_DEVICE_ID_LENGTH] = {0};
+//    Local<v8::Object> dev = v8::Object::New(args.GetIsolate());
+//    if (!pdc) {
+//      args.GetReturnValue().Set(dev);
+//      return;
+//    }
+//    pdc->getDefaultDevice(deviceName, deviceId);
+//    auto dn = v8::String::NewFromUtf8(args.GetIsolate(), deviceName,
+//                                      NewStringType::kInternalized)
+//                  .ToLocalChecked();
+//    auto di = v8::String::NewFromUtf8(args.GetIsolate(), deviceId,
+//                                      NewStringType::kInternalized)
+//                  .ToLocalChecked();
+//    dev->Set(context, Nan::New<String>("devicename").ToLocalChecked(), dn);
+//    dev->Set(context, Nan::New<String>("deviceid").ToLocalChecked(), di);
+//    deviceName[0] = '\0';
+//    deviceId[0] = '\0';
+//
+//    args.GetReturnValue().Set(dev);
+//  } while (false);
+//  LOG_LEAVE;
+//}
 
-    if (!pEngine->m_audioVdm) {
-      pEngine->m_audioVdm = new AAudioDeviceManager(pEngine->m_engine);
-    }
-    IAudioDeviceManager *adm = pEngine->m_audioVdm->get();
-    auto pdc = adm ? adm->enumeratePlaybackDevices() : nullptr;
-    char deviceName[MAX_DEVICE_ID_LENGTH] = {0};
-    char deviceId[MAX_DEVICE_ID_LENGTH] = {0};
-    Local<v8::Object> dev = v8::Object::New(args.GetIsolate());
-    if (!pdc) {
-      args.GetReturnValue().Set(dev);
-      return;
-    }
-    pdc->getDefaultDevice(deviceName, deviceId);
-    auto dn = v8::String::NewFromUtf8(args.GetIsolate(), deviceName,
-                                      NewStringType::kInternalized)
-                  .ToLocalChecked();
-    auto di = v8::String::NewFromUtf8(args.GetIsolate(), deviceId,
-                                      NewStringType::kInternalized)
-                  .ToLocalChecked();
-    dev->Set(context, Nan::New<String>("devicename").ToLocalChecked(), dn);
-    dev->Set(context, Nan::New<String>("deviceid").ToLocalChecked(), di);
-    deviceName[0] = '\0';
-    deviceId[0] = '\0';
-
-    args.GetReturnValue().Set(dev);
-  } while (false);
-  LOG_LEAVE;
-}
-
-NAPI_API_DEFINE(NodeRtcEngine, getDefaultAudioRecordingDevices) {
-  LOG_ENTER;
-  do {
-    NodeRtcEngine *pEngine = nullptr;
-    Isolate *isolate = args.GetIsolate();
-    Local<Context> context = isolate->GetCurrentContext();
-    napi_get_native_this(args, pEngine);
-    CHECK_NATIVE_THIS(pEngine);
-
-    if (!pEngine->m_audioVdm) {
-      pEngine->m_audioVdm = new AAudioDeviceManager(pEngine->m_engine);
-    }
-    IAudioDeviceManager *adm = pEngine->m_audioVdm->get();
-    auto pdc = adm ? adm->enumerateRecordingDevices() : nullptr;
-    char deviceName[MAX_DEVICE_ID_LENGTH] = {0};
-    char deviceId[MAX_DEVICE_ID_LENGTH] = {0};
-    Local<v8::Object> dev = v8::Object::New(args.GetIsolate());
-    if (!pdc) {
-      args.GetReturnValue().Set(dev);
-      return;
-    }
-    pdc->getDefaultDevice(deviceName, deviceId);
-    auto dn = v8::String::NewFromUtf8(args.GetIsolate(), deviceName,
-                                      NewStringType::kInternalized)
-                  .ToLocalChecked();
-    auto di = v8::String::NewFromUtf8(args.GetIsolate(), deviceId,
-                                      NewStringType::kInternalized)
-                  .ToLocalChecked();
-    dev->Set(context, Nan::New<String>("devicename").ToLocalChecked(), dn);
-    dev->Set(context, Nan::New<String>("deviceid").ToLocalChecked(), di);
-    deviceName[0] = '\0';
-    deviceId[0] = '\0';
-    args.GetReturnValue().Set(dev);
-  } while (false);
-  LOG_LEAVE;
-}
+//NAPI_API_DEFINE(NodeRtcEngine, getDefaultAudioRecordingDevices) {
+//  LOG_ENTER;
+//  do {
+//    NodeRtcEngine *pEngine = nullptr;
+//    Isolate *isolate = args.GetIsolate();
+//    Local<Context> context = isolate->GetCurrentContext();
+//    napi_get_native_this(args, pEngine);
+//    CHECK_NATIVE_THIS(pEngine);
+//
+//    if (!pEngine->m_audioVdm) {
+//      pEngine->m_audioVdm = new AAudioDeviceManager(pEngine->m_engine);
+//    }
+//    IAudioDeviceManager *adm = pEngine->m_audioVdm->get();
+//    auto pdc = adm ? adm->enumerateRecordingDevices() : nullptr;
+//    char deviceName[MAX_DEVICE_ID_LENGTH] = {0};
+//    char deviceId[MAX_DEVICE_ID_LENGTH] = {0};
+//    Local<v8::Object> dev = v8::Object::New(args.GetIsolate());
+//    if (!pdc) {
+//      args.GetReturnValue().Set(dev);
+//      return;
+//    }
+//    pdc->getDefaultDevice(deviceName, deviceId);
+//    auto dn = v8::String::NewFromUtf8(args.GetIsolate(), deviceName,
+//                                      NewStringType::kInternalized)
+//                  .ToLocalChecked();
+//    auto di = v8::String::NewFromUtf8(args.GetIsolate(), deviceId,
+//                                      NewStringType::kInternalized)
+//                  .ToLocalChecked();
+//    dev->Set(context, Nan::New<String>("devicename").ToLocalChecked(), dn);
+//    dev->Set(context, Nan::New<String>("deviceid").ToLocalChecked(), di);
+//    deviceName[0] = '\0';
+//    deviceId[0] = '\0';
+//    args.GetReturnValue().Set(dev);
+//  } while (false);
+//  LOG_LEAVE;
+//}
 
 NAPI_API_DEFINE(NodeRtcEngine, takeSnapshot) {
   LOG_ENTER;
@@ -7345,203 +7303,203 @@ NAPI_API_DEFINE(NodeRtcEngine, takeSnapshot) {
   LOG_LEAVE;
 }
 
-NAPI_API_DEFINE(NodeRtcEngine, startRtmpStreamWithoutTranscoding) {
-  LOG_ENTER;
-  int result = -1;
-  do {
-    NodeRtcEngine *pEngine = nullptr;
-    napi_get_native_this(args, pEngine);
-    CHECK_NATIVE_THIS(pEngine);
+//NAPI_API_DEFINE(NodeRtcEngine, startRtmpStreamWithoutTranscoding) {
+//  LOG_ENTER;
+//  int result = -1;
+//  do {
+//    NodeRtcEngine *pEngine = nullptr;
+//    napi_get_native_this(args, pEngine);
+//    CHECK_NATIVE_THIS(pEngine);
+//
+//    nodestring url;
+//    napi_status status = napi_get_value_nodestring_(args[0], url);
+//    CHECK_NAPI_STATUS(pEngine, status);
+//
+//    result = pEngine->m_engine->startRtmpStreamWithoutTranscoding(url);
+//
+//  } while (false);
+//  napi_set_int_result(args, result);
+//  LOG_LEAVE;
+//}
 
-    nodestring url;
-    napi_status status = napi_get_value_nodestring_(args[0], url);
-    CHECK_NAPI_STATUS(pEngine, status);
+//NAPI_API_DEFINE(NodeRtcEngine, startRtmpStreamWithTranscoding) {
+//  LOG_ENTER;
+//  int result = -1;
+//  do {
+//    NodeRtcEngine *pEngine = nullptr;
+//    napi_get_native_this(args, pEngine);
+//    CHECK_NATIVE_THIS(pEngine);
+//
+//    nodestring url;
+//    napi_status status = napi_get_value_nodestring_(args[0], url);
+//    CHECK_NAPI_STATUS(pEngine, status);
+//
+//    Local<Object> obj;
+//    status = napi_get_value_object_(args.GetIsolate(), args[1], obj);
+//    CHECK_NAPI_STATUS_PARAM(pEngine, status,
+//                            std::string("arg 1 is not a object"));
+//
+//    auto liveTranscoding = getLiveTranscoding(obj, args, pEngine);
+//    if (liveTranscoding == nullptr) {
+//      break;
+//    }
+//    result = pEngine->m_engine->startRtmpStreamWithTranscoding(
+//        url, *liveTranscoding);
+//    if (liveTranscoding->watermark) {
+//        for (unsigned int i=0; i<liveTranscoding->watermarkCount; i++) {
+//            delete liveTranscoding->watermark[i].url;
+//        }
+//      delete[] liveTranscoding->watermark;
+//    }
+//    if (liveTranscoding->backgroundImage) {
+//        for (unsigned int i=0; i<liveTranscoding->backgroundImageCount; i++) {
+//            delete liveTranscoding->backgroundImage[i].url;
+//        }
+//      delete[] liveTranscoding->backgroundImage;
+//    }
+//    if (liveTranscoding->transcodingUsers) {
+//      delete[] liveTranscoding->transcodingUsers;
+//    }
+//    if (liveTranscoding->advancedFeatures) {
+//        for (unsigned int i=0; i<liveTranscoding->advancedFeatureCount; i++) {
+//            delete liveTranscoding->advancedFeatures[i].featureName;
+//        }
+//      delete[] liveTranscoding->advancedFeatures;
+//    }
+//    delete liveTranscoding;
+//  } while (false);
+//  napi_set_int_result(args, result);
+//  LOG_LEAVE;
+//}
 
-    result = pEngine->m_engine->startRtmpStreamWithoutTranscoding(url);
+//NAPI_API_DEFINE(NodeRtcEngine, updateRtmpTranscoding) {
+//  LOG_ENTER;
+//  int result = -1;
+//  do {
+//    NodeRtcEngine *pEngine = nullptr;
+//    napi_get_native_this(args, pEngine);
+//    CHECK_NATIVE_THIS(pEngine);
+//
+//    Local<Object> obj;
+//    napi_status status =
+//        napi_get_value_object_(args.GetIsolate(), args[0], obj);
+//    CHECK_NAPI_STATUS_PARAM(pEngine, status,
+//                            std::string("arg 0 is not a object"));
+//
+//    auto liveTranscoding = getLiveTranscoding(obj, args, pEngine);
+//    if (liveTranscoding == nullptr) {
+//      break;
+//    }
+//    result = pEngine->m_engine->updateRtmpTranscoding(*liveTranscoding);
+//    if (liveTranscoding->watermark) {
+//      for (unsigned int i = 0; i < liveTranscoding->watermarkCount; i++) {
+//        delete liveTranscoding->watermark[i].url;
+//      }
+//      delete[] liveTranscoding->watermark;
+//    }
+//    if (liveTranscoding->backgroundImage) {
+//      for (unsigned int i = 0; i < liveTranscoding->backgroundImageCount; i++) {
+//        delete liveTranscoding->backgroundImage[i].url;
+//      }
+//      delete[] liveTranscoding->backgroundImage;
+//    }
+//    if (liveTranscoding->transcodingUsers) {
+//      delete[] liveTranscoding->transcodingUsers;
+//    }
+//    if (liveTranscoding->advancedFeatures) {
+//      for (unsigned int i = 0; i < liveTranscoding->advancedFeatureCount; i++) {
+//        delete liveTranscoding->advancedFeatures[i].featureName;
+//      }
+//      delete[] liveTranscoding->advancedFeatures;
+//    }
+//    delete liveTranscoding;
+//  } while (false);
+//  napi_set_int_result(args, result);
+//  LOG_LEAVE;
+//}
 
-  } while (false);
-  napi_set_int_result(args, result);
-  LOG_LEAVE;
-}
+//NAPI_API_DEFINE(NodeRtcEngine, stopRtmpStream) {
+//  LOG_ENTER;
+//  int result = -1;
+//  do {
+//    NodeRtcEngine *pEngine = nullptr;
+//    napi_get_native_this(args, pEngine);
+//    CHECK_NATIVE_THIS(pEngine);
+//
+//    nodestring url;
+//    napi_status status = napi_get_value_nodestring_(args[0], url);
+//    CHECK_NAPI_STATUS(pEngine, status);
+//
+//    result = pEngine->m_engine->stopRtmpStream(url);
+//
+//  } while (false);
+//  napi_set_int_result(args, result);
+//  LOG_LEAVE;
+//}
 
-NAPI_API_DEFINE(NodeRtcEngine, startRtmpStreamWithTranscoding) {
-  LOG_ENTER;
-  int result = -1;
-  do {
-    NodeRtcEngine *pEngine = nullptr;
-    napi_get_native_this(args, pEngine);
-    CHECK_NATIVE_THIS(pEngine);
+//NAPI_API_DEFINE(NodeRtcEngine, setAVSyncSource) {
+//  LOG_ENTER;
+//  int result = -1;
+//  do {
+//    NodeRtcEngine *pEngine = nullptr;
+//    napi_get_native_this(args, pEngine);
+//    CHECK_NATIVE_THIS(pEngine);
+//
+//    nodestring channelId;
+//    napi_status status = napi_get_value_nodestring_(args[0], channelId);
+//    CHECK_NAPI_STATUS(pEngine, status);
+//
+//    uid_t uid;
+//    status = napi_get_value_uid_t_(args[1], uid);
+//    CHECK_NAPI_STATUS(pEngine, status);
+//
+//    result = pEngine->m_engine->setAVSyncSource(channelId, uid);
+//  } while (false);
+//  napi_set_int_result(args, result);
+//  LOG_LEAVE;
+//}
 
-    nodestring url;
-    napi_status status = napi_get_value_nodestring_(args[0], url);
-    CHECK_NAPI_STATUS(pEngine, status);
+//NAPI_API_DEFINE(NodeRtcEngine, followSystemPlaybackDevice) {
+//  LOG_ENTER;
+//  int result = -1;
+//  do {
+//    NodeRtcEngine *pEngine = nullptr;
+//    napi_get_native_this(args, pEngine);
+//    CHECK_NATIVE_THIS(pEngine);
+//
+//    bool enable;
+//    napi_status status = napi_get_value_bool_(args[0], enable);
+//    CHECK_NAPI_STATUS(pEngine, status);
+//
+//    if (!pEngine->m_audioVdm) {
+//      pEngine->m_audioVdm = new AAudioDeviceManager(pEngine->m_engine);
+//    }
+//    result = pEngine->m_audioVdm->get()->followSystemPlaybackDevice(enable);
+//  } while (false);
+//  napi_set_int_result(args, result);
+//  LOG_LEAVE;
+//}
 
-    Local<Object> obj;
-    status = napi_get_value_object_(args.GetIsolate(), args[1], obj);
-    CHECK_NAPI_STATUS_PARAM(pEngine, status,
-                            std::string("arg 1 is not a object"));
-
-    auto liveTranscoding = getLiveTranscoding(obj, args, pEngine);
-    if (liveTranscoding == nullptr) {
-      break;
-    }
-    result = pEngine->m_engine->startRtmpStreamWithTranscoding(
-        url, *liveTranscoding);
-    if (liveTranscoding->watermark) {
-        for (unsigned int i=0; i<liveTranscoding->watermarkCount; i++) {
-            delete liveTranscoding->watermark[i].url;
-        }
-      delete[] liveTranscoding->watermark;
-    }
-    if (liveTranscoding->backgroundImage) {
-        for (unsigned int i=0; i<liveTranscoding->backgroundImageCount; i++) {
-            delete liveTranscoding->backgroundImage[i].url;
-        }
-      delete[] liveTranscoding->backgroundImage;
-    }
-    if (liveTranscoding->transcodingUsers) {
-      delete[] liveTranscoding->transcodingUsers;
-    }
-    if (liveTranscoding->advancedFeatures) {
-        for (unsigned int i=0; i<liveTranscoding->advancedFeatureCount; i++) {
-            delete liveTranscoding->advancedFeatures[i].featureName;
-        }
-      delete[] liveTranscoding->advancedFeatures;
-    }
-    delete liveTranscoding;
-  } while (false);
-  napi_set_int_result(args, result);
-  LOG_LEAVE;
-}
-
-NAPI_API_DEFINE(NodeRtcEngine, updateRtmpTranscoding) {
-  LOG_ENTER;
-  int result = -1;
-  do {
-    NodeRtcEngine *pEngine = nullptr;
-    napi_get_native_this(args, pEngine);
-    CHECK_NATIVE_THIS(pEngine);
-
-    Local<Object> obj;
-    napi_status status =
-        napi_get_value_object_(args.GetIsolate(), args[0], obj);
-    CHECK_NAPI_STATUS_PARAM(pEngine, status,
-                            std::string("arg 0 is not a object"));
-
-    auto liveTranscoding = getLiveTranscoding(obj, args, pEngine);
-    if (liveTranscoding == nullptr) {
-      break;
-    }
-    result = pEngine->m_engine->updateRtmpTranscoding(*liveTranscoding);
-    if (liveTranscoding->watermark) {
-      for (unsigned int i = 0; i < liveTranscoding->watermarkCount; i++) {
-        delete liveTranscoding->watermark[i].url;
-      }
-      delete[] liveTranscoding->watermark;
-    }
-    if (liveTranscoding->backgroundImage) {
-      for (unsigned int i = 0; i < liveTranscoding->backgroundImageCount; i++) {
-        delete liveTranscoding->backgroundImage[i].url;
-      }
-      delete[] liveTranscoding->backgroundImage;
-    }
-    if (liveTranscoding->transcodingUsers) {
-      delete[] liveTranscoding->transcodingUsers;
-    }
-    if (liveTranscoding->advancedFeatures) {
-      for (unsigned int i = 0; i < liveTranscoding->advancedFeatureCount; i++) {
-        delete liveTranscoding->advancedFeatures[i].featureName;
-      }
-      delete[] liveTranscoding->advancedFeatures;
-    }
-    delete liveTranscoding;
-  } while (false);
-  napi_set_int_result(args, result);
-  LOG_LEAVE;
-}
-
-NAPI_API_DEFINE(NodeRtcEngine, stopRtmpStream) {
-  LOG_ENTER;
-  int result = -1;
-  do {
-    NodeRtcEngine *pEngine = nullptr;
-    napi_get_native_this(args, pEngine);
-    CHECK_NATIVE_THIS(pEngine);
-
-    nodestring url;
-    napi_status status = napi_get_value_nodestring_(args[0], url);
-    CHECK_NAPI_STATUS(pEngine, status);
-
-    result = pEngine->m_engine->stopRtmpStream(url);
-
-  } while (false);
-  napi_set_int_result(args, result);
-  LOG_LEAVE;
-}
-
-NAPI_API_DEFINE(NodeRtcEngine, setAVSyncSource) {
-  LOG_ENTER;
-  int result = -1;
-  do {
-    NodeRtcEngine *pEngine = nullptr;
-    napi_get_native_this(args, pEngine);
-    CHECK_NATIVE_THIS(pEngine);
-
-    nodestring channelId;
-    napi_status status = napi_get_value_nodestring_(args[0], channelId);
-    CHECK_NAPI_STATUS(pEngine, status);
-
-    uid_t uid;
-    status = napi_get_value_uid_t_(args[1], uid);
-    CHECK_NAPI_STATUS(pEngine, status);
-
-    result = pEngine->m_engine->setAVSyncSource(channelId, uid);
-  } while (false);
-  napi_set_int_result(args, result);
-  LOG_LEAVE;
-}
-
-NAPI_API_DEFINE(NodeRtcEngine, followSystemPlaybackDevice) {
-  LOG_ENTER;
-  int result = -1;
-  do {
-    NodeRtcEngine *pEngine = nullptr;
-    napi_get_native_this(args, pEngine);
-    CHECK_NATIVE_THIS(pEngine);
-
-    bool enable;
-    napi_status status = napi_get_value_bool_(args[0], enable);
-    CHECK_NAPI_STATUS(pEngine, status);
-
-    if (!pEngine->m_audioVdm) {
-      pEngine->m_audioVdm = new AAudioDeviceManager(pEngine->m_engine);
-    }
-    result = pEngine->m_audioVdm->get()->followSystemPlaybackDevice(enable);
-  } while (false);
-  napi_set_int_result(args, result);
-  LOG_LEAVE;
-}
-
-NAPI_API_DEFINE(NodeRtcEngine, followSystemRecordingDevice) {
-  LOG_ENTER;
-  int result = -1;
-  do {
-    NodeRtcEngine *pEngine = nullptr;
-    napi_get_native_this(args, pEngine);
-    CHECK_NATIVE_THIS(pEngine);
-
-    bool enable;
-    napi_status status = napi_get_value_bool_(args[0], enable);
-    CHECK_NAPI_STATUS(pEngine, status);
-
-    if (!pEngine->m_audioVdm) {
-      pEngine->m_audioVdm = new AAudioDeviceManager(pEngine->m_engine);
-    }
-    result = pEngine->m_audioVdm->get()->followSystemRecordingDevice(enable);
-  } while (false);
-  napi_set_int_result(args, result);
-  LOG_LEAVE;
-}
+//NAPI_API_DEFINE(NodeRtcEngine, followSystemRecordingDevice) {
+//  LOG_ENTER;
+//  int result = -1;
+//  do {
+//    NodeRtcEngine *pEngine = nullptr;
+//    napi_get_native_this(args, pEngine);
+//    CHECK_NATIVE_THIS(pEngine);
+//
+//    bool enable;
+//    napi_status status = napi_get_value_bool_(args[0], enable);
+//    CHECK_NAPI_STATUS(pEngine, status);
+//
+//    if (!pEngine->m_audioVdm) {
+//      pEngine->m_audioVdm = new AAudioDeviceManager(pEngine->m_engine);
+//    }
+//    result = pEngine->m_audioVdm->get()->followSystemRecordingDevice(enable);
+//  } while (false);
+//  napi_set_int_result(args, result);
+//  LOG_LEAVE;
+//}
 
 NAPI_API_DEFINE(NodeRtcEngine, getScreenCaptureSources) {
   LOG_ENTER;
@@ -8291,16 +8249,12 @@ NAPI_API_DEFINE(NodeRtcChannel, setLiveTranscoding) {
     }
     result = pChannel->m_channel->setLiveTranscoding(*liveTranscoding);
     if (liveTranscoding->watermark) {
-      for (unsigned int i = 0; i < liveTranscoding->watermarkCount; i++) {
-        delete liveTranscoding->watermark[i].url;
-      }
-      delete[] liveTranscoding->watermark;
+      delete liveTranscoding->watermark->url;
+      delete liveTranscoding->watermark;
     }
     if (liveTranscoding->backgroundImage) {
-      for (unsigned int i = 0; i < liveTranscoding->backgroundImageCount; i++) {
-        delete liveTranscoding->backgroundImage[i].url;
-      }
-      delete[] liveTranscoding->backgroundImage;
+      delete liveTranscoding->backgroundImage->url;
+      delete liveTranscoding->backgroundImage;
     }
     if (liveTranscoding->transcodingUsers) {
       delete[] liveTranscoding->transcodingUsers;

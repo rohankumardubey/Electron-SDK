@@ -1641,7 +1641,7 @@ void NodeEventHandler::onChannelMediaRelayStateChanged_node(
 
 void NodeEventHandler::onRtmpStreamingStateChanged(
     const char *url, agora::rtc::RTMP_STREAM_PUBLISH_STATE state,
-    agora::rtc::RTMP_STREAM_PUBLISH_ERROR_TYPE errCode) {
+    agora::rtc::RTMP_STREAM_PUBLISH_ERROR errCode) {
   FUNC_TRACE;
   std::string sUrl(url);
   node_async_call::async_call([this, sUrl, state, errCode] {
@@ -1826,11 +1826,11 @@ void NodeEventHandler::onSnapshotTaken(const char* channel, uid_t uid, const cha
 }
 
 // 3.6.0.2
-void NodeEventHandler::onAudioDeviceTestVolumeIndication(AudioDeviceTestVolumeType volumeType, int volume) {
-  node_async_call::async_call([this, volumeType, volume] {
-    MAKE_JS_CALL_2(RTC_EVENT_AUDIO_DEVICE_TEST_VOLUME_INDICATION, int32, volumeType, int32, volume);
-  });
-}
+//void NodeEventHandler::onAudioDeviceTestVolumeIndication(AudioDeviceTestVolumeType volumeType, int volume) {
+//  node_async_call::async_call([this, volumeType, volume] {
+//    MAKE_JS_CALL_2(RTC_EVENT_AUDIO_DEVICE_TEST_VOLUME_INDICATION, int32, volumeType, int32, volume);
+//  });
+//}
 
 }  // namespace rtc
 }  // namespace agora

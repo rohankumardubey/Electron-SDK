@@ -147,10 +147,10 @@ void AgoraVideoSourceEventHandler::onLocalVideoStateChanged(
   m_videoSource.notifyLocalVideoStateChanged(localVideoState, error);
 }
 
-#if defined(_WIN32)
-void AgoraVideoSourceEventHandler::onScreenCaptureInfoUpdated(
-    agora::rtc::ScreenCaptureInfo &info) {
-  m_videoSource.notifyScreenCaptureInfoUpdated(info.graphicsCardType,
-                                               (int)info.errCode);
-}
-#endif
+//#if defined(_WIN32)
+//void AgoraVideoSourceEventHandler::onScreenCaptureInfoUpdated(
+//    agora::rtc::ScreenCaptureInfo &info) {
+//  m_videoSource.notifyScreenCaptureInfoUpdated(info.graphicsCardType,
+//                                               (int)info.errCode);
+//}
+//#endif

@@ -198,22 +198,6 @@ export interface RtcImage {
   width: number;
   /** Height of the image on the broadcasting video. */
   height: number;
-  /**
-   * The layer number of the watermark or background image. The value range is
-   * [0,255]:
-   * - `0`: (Default) The bottom layer.
-   * - `255`: The top layer.
-   *
-   * @since v3.6.0
-   */
-  zOrder: number;
-  /** The transparency of the watermark or background image. The value range is [0.0,1.0]:
-   * - `0.0`: Completely transparent.
-   * - `1.0`: (Default) Opaque.
-   *
-   * @since v3.6.0
-   */
-  alpha: number;
 }
 /**
  * Sets the CDN live audio/video transcoding settings.
@@ -3697,37 +3681,37 @@ export interface NodeRtcEngine {
    * @ignore
    */
   takeSnapshot(channel: string, uid: number, filepath: string): number;
-  /**
-   * @ignore
-   */
-  startRtmpStreamWithoutTranscoding(url: string): number;
-  /**
-   * @ignore
-   */
-  startRtmpStreamWithTranscoding(
-    url: string,
-    transcoding: TranscodingConfig
-  ): number;
-  /**
-   * @ignore
-   */
-  updateRtmpTranscoding(transcoding: TranscodingConfig): number;
-  /**
-   * @ignore
-   */
-  stopRtmpStream(url: string): number;
-  /**
-   * @ignore
-   */
-  setAVSyncSource(channelId: string, uid: number): number;
-  /**
-   * @ignore
-   */
-  followSystemPlaybackDevice(enable: boolean): number;
-  /**
-   * @ignore
-   */
-  followSystemRecordingDevice(enable: boolean): number;
+  // /**
+  //  * @ignore
+  //  */
+  // startRtmpStreamWithoutTranscoding(url: string): number;
+  // /**
+  //  * @ignore
+  //  */
+  // startRtmpStreamWithTranscoding(
+  //   url: string,
+  //   transcoding: TranscodingConfig
+  // ): number;
+  // /**
+  //  * @ignore
+  //  */
+  // updateRtmpTranscoding(transcoding: TranscodingConfig): number;
+  // /**
+  //  * @ignore
+  //  */
+  // stopRtmpStream(url: string): number;
+  // /**
+  //  * @ignore
+  //  */
+  // setAVSyncSource(channelId: string, uid: number): number;
+  // /**
+  //  * @ignore
+  //  */
+  // followSystemPlaybackDevice(enable: boolean): number;
+  // /**
+  //  * @ignore
+  //  */
+  // followSystemRecordingDevice(enable: boolean): number;
   /**
    * @ignore
    */
@@ -4390,8 +4374,8 @@ export interface NodeRtcEngine {
    * @ignore
    */
   adjustPlaybackSignalVolume(volume: number): number;
-  getDefaultAudioPlaybackDevices(): Object;
-  getDefaultAudioRecordingDevices(): Object;
+  // getDefaultAudioPlaybackDevices(): Object;
+  // getDefaultAudioRecordingDevices(): Object;
   videoSourceDisableAudio(): number;
   adjustLoopbackSignalVolume(volume: number): number;
   videoSourceAdjustRecordingSignalVolume(volume: number): number;

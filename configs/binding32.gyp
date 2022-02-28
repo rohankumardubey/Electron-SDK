@@ -275,10 +275,10 @@
                     'files': [
                         './sdk/dll/agora_rtc_sdk.dll',
                         './sdk/dll/libagora-wgc.dll',
-                        './sdk/dll/libagora_fdkaac.dll',
+                        './sdk/dll/libagora-fdkaac.dll',
                         './sdk/dll/libagora_ci_extension.dll',
                         './sdk/dll/libagora_fd_extension.dll',
-                        './sdk/dll/libagora_mpg123.dll',
+                        './sdk/dll/libagora-mpg123.dll',
                         './sdk/dll/libagora_video_process_extension.dll',
                         './sdk/dll/libagora-ffmpeg.dll',
                         './sdk/dll/libagora-soundtouch.dll',

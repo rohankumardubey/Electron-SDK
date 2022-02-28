@@ -315,7 +315,7 @@ class NodeEventHandler : public IRtcEngineEventHandler,
   // 3.0.0
   virtual void onRtmpStreamingStateChanged(
       const char *url, agora::rtc::RTMP_STREAM_PUBLISH_STATE state,
-      agora::rtc::RTMP_STREAM_PUBLISH_ERROR_TYPE errCode) override;
+      agora::rtc::RTMP_STREAM_PUBLISH_ERROR errCode) override;
 
   // 3.1.0
   virtual void onFirstLocalAudioFramePublished(int elapsed);
@@ -361,7 +361,7 @@ class NodeEventHandler : public IRtcEngineEventHandler,
   // 3.5.2
   virtual void onSnapshotTaken(const char* channel, uid_t uid, const char* filePath, int width, int height, int errCode) override;
   // 3.6.0.2
-  virtual void onAudioDeviceTestVolumeIndication(AudioDeviceTestVolumeType volumeType, int volume) override;
+//  virtual void onAudioDeviceTestVolumeIndication(AudioDeviceTestVolumeType volumeType, int volume) override;
 
 private:
   void onJoinChannelSuccess_node(const char* channel, uid_t uid, int elapsed);
