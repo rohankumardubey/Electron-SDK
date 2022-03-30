@@ -9,6 +9,12 @@
 
 ## 3.6.1-rc.3-build.228(Jan 28th, 2022)
 - change api: getScreenWindowsInfo getScreenDisplaysInfo getRealScreenDisplaysInfo
+
+## 3.6.1-rc.2-build.222(Feb 22th, 2021)
+- remove some extension
+
+## 3.6.1-rc.2-build.210(Feb 10th, 2021)
+
 - update native sdk
 
 ## 3.6.1-rc.1-build.126(Jan 26th, 2021)
