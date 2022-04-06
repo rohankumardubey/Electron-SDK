@@ -457,7 +457,13 @@ node_error AgoraVideoSourceSink::join(const char* token,
   LOG_ERROR("%s, AgoraVideoSourceSink not m_initialized", __FUNCTION__);
   return node_status_error;
 }
-
+node_error setLocalAccessPoint::setLocalAccessPoint(std::unique_ptr<LocalAccessPointConfigurationCmd> cmd) {
+  LOG_ENTER;
+  return m_ipcMsg->sendMessage(AGORA_IPC_SET_LOCAL_ACCESS_POINT, (char*)cmd.get(),
+                                 sizeof(LocalAccessPointConfigurationCmd))
+               ? node_ok
+               : node_generic_error;
+}
 node_error AgoraVideoSourceSink::leave() {
   LOG_ENTER;
   if (m_initialized) {

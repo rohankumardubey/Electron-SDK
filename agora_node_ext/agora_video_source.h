@@ -87,7 +87,7 @@ class AgoraVideoSource {
   virtual node_error join(const char *token, const char *cname,
                           const char *chan_info, uid_t uid,
                           agora::rtc::ChannelMediaOptions opt) = 0;
-
+  virtual node_error setLocalAccessPoint(std::unique_ptr<LocalAccessPointConfigurationCmd> cmd) = 0;
   /**
    * To ask video source to leave channel.
    */
