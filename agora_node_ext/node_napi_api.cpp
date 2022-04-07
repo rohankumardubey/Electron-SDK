@@ -231,6 +231,9 @@ int NodeVideoFrameTransporter::deliverFrame_I420(
   int destStride = info.m_destWidth ? info.m_destWidth : stride;
   int destWidth = info.m_destWidth ? info.m_destWidth : videoFrame.width;
   int destHeight = info.m_destHeight ? info.m_destHeight : videoFrame.height;
+  if (destHeight % 2 != 0) {
+    destHeight = (destHeight + 1) / 2 * 2;
+  }
   size_t imageSize =
       sizeof(image_header_type) + destStride * destHeight * 3 / 2;
   auto s = info.m_buffer.size();
